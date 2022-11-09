@@ -4,4 +4,5 @@ import sample.entity.Entity as Entity
 import sample.dao.connect as connection
 
 if __name__ == '__main__':
-    print("Good")
+    db=connection.ConnectDatabase()
+    print(type(db.query_customer()[0]))
