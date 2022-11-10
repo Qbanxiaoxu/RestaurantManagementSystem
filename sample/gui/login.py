@@ -9,6 +9,7 @@ import tkinter.messagebox
 from PIL import Image, ImageTk
 import sample.dao.connect as connection
 import sample.gui.signup as new_signup
+import os
 
 
 class Login:
@@ -28,11 +29,11 @@ class Login:
         # 画布用来放置图片
         canvas = tkinter.Canvas(self.window_login, width=690, height=300)
         # 打开图像
-        img = Image.open("Login.jpg")
+        img = Image.open(os.path.realpath("../resources/Login.jpg"))
         # 使图像兼容
         image_file = ImageTk.PhotoImage(img)
         # 在画布上放置图片
-        image = canvas.create_image(0, 0, anchor="nw", image=image_file)
+        canvas.create_image(0, 0, anchor="nw", image=image_file)
         # 画布在登录窗口的位置
         canvas.pack(side='top')
         # 标签 用户名和密码
@@ -58,37 +59,24 @@ class Login:
     # 登录操作
     def signin(self):
         # 输入框获取用户名密码
-        name = self.username_input_login.get()
+        username = self.username_input_login.get()
         password = self.password_input_login.get()
-        my_database = connection.ConnectDatabase()
-
-        # 获取数据库中的用户信息，顾客、雇员
-        customers_info = my_database.query_customer()
-        employees_info = my_database.query_employee()
 
         # 判断用户名和密码是否匹配
-        if name != '' and password != '':
+        if username != '' and password != '':
             # 记录是顾客或雇员
-            is_customer_signin = False
-            is_employee_signin = False
-            for customer in customers_info:
-                if name == customer["customer_name"] and password == customer["customer_password"]:
-                    is_customer_signin = True
-                    break
-            for employee in employees_info:
-                if name == employee["employee_name"] and password == employee["employee_password"]:
-                    is_employee_signin = True
-                    break
+            is_customer_signin, is_employee_signin = connection.ConnectDatabase().verify(username, password)
             if is_customer_signin:
                 tkinter.messagebox.showinfo(title='welcome',
-                                            message='Welcome!' + name)
+                                            message='Welcome!' + username)
                 self.window_login.destroy()
                 # TO DO 打开顾客界面
             if is_employee_signin:
                 tkinter.messagebox.showinfo(title='welcome',
-                                            message='Welcome!' + name)
+                                            message='Welcome!' + username)
                 self.window_login.destroy()
                 # TO DO 打开雇员界面
+                # TO DO 判断雇员身份跳转不同界面
             if not is_customer_signin and not is_employee_signin:
                 is_signup = tkinter.messagebox.askyesno('Sign up?',
                                                         'You have not registered yet, do you want to register now?')
@@ -101,6 +89,3 @@ class Login:
     def signup(self):
         self.window_login.destroy()
         new_signup.Signup()
-
-
-test = Login()

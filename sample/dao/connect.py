@@ -662,3 +662,29 @@ class ConnectDatabase:
                     values = (restaurant_table.table_state, restaurant_table.table_id)
                     cursor.execute(sql, values)
                     connection.commit()
+
+    def verify(self, username, password):
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            # 获取数据库中的用户信息，顾客、雇员
+            customers_info = self.query_customer()
+            employees_info = self.query_employee()
+            # 记录是顾客或雇员
+            is_customer = False
+            is_employee = False
+            for customer in customers_info:
+                if username == customer["customer_name"] and password == customer["customer_password"]:
+                    is_customer = True
+                    break
+            for employee in employees_info:
+                if username == employee["employee_name"] and password == employee["employee_password"]:
+                    is_employee = True
+                    break
+        return is_customer, is_employee

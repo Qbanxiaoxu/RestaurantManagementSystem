@@ -52,27 +52,13 @@ class Signup:
                 tkinter.messagebox.showerror(title='error',
                                              message='The user name or password or contact information is empty')
             else:
-                my_database = connection.ConnectDatabase()
-
-                # 获取数据库中的用户信息，顾客、雇员
-                customers_info = my_database.query_customer()
-                employees_info = my_database.query_employee()
                 # 记录是顾客或雇员
-                is_customer_signup = False
-                is_employee_signup = False
-                for customer in customers_info:
-                    if username == customer["customer_name"] and password == customer["customer_password"]:
-                        is_customer_signup = True
-                        break
-                for employee in employees_info:
-                    if username == employee["employee_name"] and password == employee["employee_password"]:
-                        is_employee_signup = True
-                        break
+                is_customer_signup, is_employee_signup = connection.ConnectDatabase().verify(username, password)
                 if is_customer_signup or is_employee_signup:
                     tkinter.messagebox.showerror(title='error', message='The user name is already in use!')
                 else:
                     customer = Entity.Customer(None, username, password, contact_info)
-                    my_database.add_customer(customer)
+                    connection.ConnectDatabase().add_customer(customer)
                     tkinter.messagebox.showinfo(title='signup result', message='Successful!')
                     self.window_signup.destroy()
         else:
