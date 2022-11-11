@@ -7,7 +7,7 @@ import sample.dao.connect as connection
 import sample.entity.Entity as Entity
 
 
-class Signup:
+class SignupUI:
     def __init__(self):
         # 注册界面
         self.window_signup = tkinter.Tk()

@@ -4,7 +4,7 @@ import sample.entity.Entity as Entity
 import sample.dao.connect as connection
 import sample.gui.login as test
 if __name__ == '__main__':
-    test.Login()
+    test.LoginUI()
     # db=connection.ConnectDatabase()
     # # print(type(db.query_customer()[0]))
     # my_database = connection.ConnectDatabase()

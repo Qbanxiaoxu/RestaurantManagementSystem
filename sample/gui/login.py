@@ -12,7 +12,7 @@ import sample.gui.signup as new_signup
 import os
 
 
-class Login:
+class LoginUI:
     def __init__(self):
         # 登录窗口
         self.window_login = tkinter.Tk()
@@ -88,4 +88,4 @@ class Login:
 
     def signup(self):
         self.window_login.destroy()
-        new_signup.Signup()
+        new_signup.SignupUI()
