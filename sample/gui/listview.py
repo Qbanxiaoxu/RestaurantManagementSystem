@@ -1,91 +1,53 @@
 # -*- coding: utf-8 -*-
-# author：xxp time:2022/11/9
-
+# author：xxp time:2022/11/12
 import tkinter
 import tkinter.messagebox
-from PIL import Image, ImageTk
-import sample.dao.connect as connection
-import sample.gui.signup as new_signup
-import os
-
-# window_login = tkinter.Tk()
-# # 标题
-# window_login.title('Welcome to the fast food restaurant management system')
-# # 设置窗口不可变
-# window_login.resizable(False, False)
-# # 屏幕宽和高
-# screen_width_login = window_login.winfo_screenwidth()
-# screen_height_login = window_login.winfo_screenheight()
-# # 屏幕大小和位置
-# window_login.geometry(
-#     '%dx%d+%d+%d' % (1000, 700, (screen_width_login - 1000) / 2, (screen_height_login - 700) / 2 - 30))
-#
-# window_login.mainloop()
-
-# !/usr/bin/python3
-# -*-coding:utf-8 -*-
-"""
-@author Kwina
-@desc 本模块是封装gui控件
-@date 20200519
-@version 1.0
-说明：
-classes:
-    1.ListView()：
-        1.version：1.0
-        2.功能：实现可视列表复选框，及列表数据的增删改查
-        3.设计思路：利用python的标准包tkinter实现。这里没有对treeview进行封装，
-            只是利用了treeview数据可以修改实现的功能
-            复选框的功能利用字符☑□的变化实现的
-        4.vals：一行的vals是不包含行头部信息的数据集合
-        5.values：一个的values是包含行头部信息的数据集合
-        6.行的复选框和索引占用了item数据的第1列，
-            所以数据的增删改查都重新封装成函数
-        7.cleare...：这一类方法只清空数据，也就是把数据改为空
-        8.delete...：这一类方法是删除整行
-"""
-
-from tkinter import *
 from tkinter import ttk
+from tkinter import *
+
+import sample.dao.connect as connection
 
 
-class ListView:
+class ListViewUI:
     char_ct = '☑'  # 复选框选中标识符
     chat_cf = '□'  # 复选框未选中标识符
 
-    def __init__(self, tk, x=0, y=0, height=400, width=600):
-        self.tk = tk
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.rows_count = 0
+    def __init__(self, frame, type_view):
+        self.frame_menu = frame
         self.cols_count = 0
+        self.rows_count = 0
         self.head_tags = ['index']
         self.head_widths = [50]
         self.head_texts = ['']
-        self.tree = None
+        self.tree = ttk.Treeview(frame, columns=self.head_tags, show='headings')
         self.__created = False  # 控制表格创建后，停用部分方法
         self.__check_boxes = True  # 标识是否有复选框功能
         self.__show_index = True  # 标识是否显示行号
 
+        if type_view == 'menu':
+            self.add_column('dish_id')
+            self.add_column('dish_name')
+            self.add_column('dish_price')
+            self.add_column('dish_description')
+            self.set_rows_height_fontsize()
+            self.set_head_font()
+            self.create_listview()
+            menu = connection.ConnectDatabase().query_menu()
+            for m in menu:
+                dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
+                self.add_row(False, dish)
+            btn_modify = tkinter.Button(self.frame_menu, text="Add to shopping cart")
+            btn_modify.place(x=300, y=480, width=200, height=50)
+
     def create_listview(self):
-        """
-        设置好列后，执行这个函数显示出控件
-        """
         if self.__created:
-            print('不能再次创建！')
+            tkinter.messagebox.showerror(title='error', message='The menu already exists!')
         else:
             self.__created = True
-            self.cols_count = len(self.head_tags) - 1  # 第一列用作索引了
-
-            frame1 = Frame(self.tk, relief=RAISED, bg='#F0F8FF', width=850, height=550)
-            frame1.place(height=self.height, width=self.width, x=self.x, y=self.y)
-            # frame1.propagate(False)  # 使组件大小不变，此时width才起作用
-
+            self.cols_count = len(self.head_tags) - 1  # 第一列用作索引
             # 定义listview
-            self.tree = ttk.Treeview(frame1, columns=self.head_tags, show='headings')
-            self.tree.column(self.head_tags[0], width=self.head_widths[0], anchor='center')  # stretch=YES怎么用
+            self.tree = ttk.Treeview(self.frame_menu, columns=self.head_tags, show='headings')
+            self.tree.column(self.head_tags[0], width=self.head_widths[0], anchor='center')
             for i in range(1, len(self.head_tags)):
                 self.tree.column(self.head_tags[i], width=self.head_widths[i], anchor='center')
                 self.tree.heading(self.head_tags[i], text=self.head_texts[i])
@@ -93,13 +55,13 @@ class ListView:
             # 设置垂直滚动条
             self.tree.place(x=0, y=0, width=800, height=450)
 
-            sb_ver = tkinter.Scrollbar(frame1, orient=VERTICAL)
+            sb_ver = tkinter.Scrollbar(self.frame_menu, orient=VERTICAL)
             sb_ver.place(x=800, y=0, height=450)
             self.tree.config(yscrollcommand=sb_ver.set)
             sb_ver.config(command=self.tree.yview)
 
             # 设置水平滚动条
-            sb_hor = tkinter.Scrollbar(frame1, orient=HORIZONTAL)
+            sb_hor = tkinter.Scrollbar(self.frame_menu, orient=HORIZONTAL)
             sb_hor.place(x=0, y=450, width=800)
             self.tree.config(xscrollcommand=sb_hor.set)
             sb_hor.config(command=self.tree.xview)
@@ -122,12 +84,9 @@ class ListView:
             self.head_texts.append(text)
 
     def add_row_char(self, check_char=char_ct, vals=''):
-        """
-        在最后增加一行
-        """
         if self.__check_boxes:
-            if check_char != ListView.char_ct:
-                check_char = ListView.chat_cf
+            if check_char != ListViewUI.char_ct:
+                check_char = ListViewUI.chat_cf
             index = '%s%d' % (check_char, self.rows_count + 1)
         else:
             index = self.rows_count + 1
@@ -162,12 +121,14 @@ class ListView:
         """
         self.tree.column("#%d" % col_num, width=width)  # 可以动态改变列宽
 
-    def set_head_font(self, font='黑体', size=15):
+    @staticmethod
+    def set_head_font(font='黑体', size=15):
         # 设置表头字体大小
         style = ttk.Style()
         style.configure("Treeview.Heading", font=(font, size))
 
-    def set_rows_height(self, height=30):
+    @staticmethod
+    def set_rows_height(height=30):
         """
         设置行高
         :param height: 行高
@@ -186,11 +147,6 @@ class ListView:
 
     @staticmethod
     def set_rows_height_fontsize(height=30, font=15):
-        """
-        设置行高和字号
-        :param height: 行高
-        :param font: 字号
-        """
         s = ttk.Style()
         s.configure('Treeview', rowheight=height, font=(None, font))
 
@@ -208,11 +164,6 @@ class ListView:
                     return it
 
     def get_row_values_by_item(self, item):
-        """
-        获取一行的值内容，包含行头部信息
-        :param row_num: 行号
-        :return: 元组,1为头部信息，1以后为表格信息
-        """
         values = self.tree.item(item, 'values')
         return values
 
@@ -268,12 +219,6 @@ class ListView:
         return index
 
     def get_index_by_item(self, item):
-        """
-        获取一行的索引
-        :param item:
-        :param by_item: 行对象
-        :return: 索引（整数）
-        """
         values = self.tree.item(item, 'values')
         return self.get_index_by_values(values)
 
@@ -287,10 +232,6 @@ class ListView:
         return self.get_index_by_item(item)
 
     def get_index_select(self):
-        """
-        获取选中行的行号
-        :return: 行号
-        """
         try:
             item = self.tree.selection()[0]  # 获取行对象
         except Exception:
@@ -334,12 +275,12 @@ class ListView:
         """
         if self.__check_boxes:
             check_str = values[0][0:1]
-            if check_str == ListView.char_ct:
+            if check_str == ListViewUI.char_ct:
                 return True
             else:
                 return False
 
-    def get_checkbl_by_item(self, item):
+    def get_check_bl_by_item(self, item):
         """
         获取某一行的勾选状况
         :param item: 行对象
@@ -353,9 +294,9 @@ class ListView:
         :param row_num: 行号
         """
         item = self.get_row(row_num)
-        return self.get_checkbl_by_item(item)
+        return self.get_check_bl_by_item(item)
 
-    def get_checkchar_by_values(self, values):
+    def get_check_char_by_values(self, values):
         """
         获取某一行的勾选符号
         :param item: 行数据（包含行头部信息）
@@ -366,13 +307,13 @@ class ListView:
             check_str = ''
         return check_str
 
-    def get_checkchar_by_item(self, item):
+    def get_check_char_by_item(self, item):
         """
         获取某一行的勾选符号
         :param item: 行对象
         """
         values = self.get_row_values_by_item(item)
-        return self.get_checkchar_by_values(values)
+        return self.get_check_char_by_values(values)
 
     def get_check_char(self, row_num):
         """
@@ -380,7 +321,7 @@ class ListView:
         :param item: 行对象
         """
         item = self.get_row(row_num)
-        return self.get_checkchar_by_item(item)
+        return self.get_check_char_by_item(item)
 
     def change_check_by_item(self, item, check_bl=True):
         """
@@ -396,11 +337,6 @@ class ListView:
             self.tree.set(item, column=col_str, value=value)
 
     def change_check_by_item_char(self, item, check_char=char_ct):
-        """
-        修改一行的复选状态
-        :param item: 行对象
-        :param check_char:复选字符
-        """
         if self.__check_boxes:
             index = self.get_index_by_item(item)
             value = '%s%s' % (check_char, index)
@@ -415,10 +351,10 @@ class ListView:
             vals = self.get_row_values_by_item(item)
             check_str = vals[0][0:1]
             index = vals[0][1:]
-            if check_str == ListView.char_ct:
-                value = ListView.chat_cf + index
+            if check_str == ListViewUI.char_ct:
+                value = ListViewUI.chat_cf + index
             else:
-                value = ListView.char_ct + index
+                value = ListViewUI.char_ct + index
             col_str = '#%d' % 1
             self.tree.set(item, column=col_str, value=value)  # 修改单元格的值
 
@@ -497,7 +433,7 @@ class ListView:
         if self.cols_count < len(values) - 1:
             end_col = self.cols_count
         # 写入头部信息
-        check_char = self.get_checkchar_by_values(values)
+        check_char = self.get_check_char_by_values(values)
         index = self.get_index_by_item(item)
         self.change_head_by_item(item, check_char, index)
         # 写入行表格内容
@@ -576,13 +512,6 @@ class ListView:
 
     def change_row_all_by_item_char_values(
             self, item, check_char, index, values):
-        """
-        修改一整行的值
-        :param item: 行对象
-        :param check_char: 复选框符号
-        :param index: 行号
-        :param values: 表格值列表（包含行头部信息）
-        """
         end_col = len(values) - 1
         if self.cols_count < len(values) - 1:
             end_col = self.cols_count
@@ -656,9 +585,9 @@ class ListView:
         :return: 复选框
         """
         if bl:
-            return ListView.char_ct
+            return ListViewUI.char_ct
         else:
-            return ListView.chat_cf
+            return ListViewUI.chat_cf
 
     @staticmethod
     def check_char2bl(char=char_ct):
@@ -667,7 +596,7 @@ class ListView:
         :param char: ☑代表已选
         :return: 复选框
         """
-        if char == ListView.char_ct:
+        if char == ListViewUI.char_ct:
             return True
         else:
             return False
@@ -708,10 +637,10 @@ class ListView:
                 vals = self.tree.item(it, 'values')
                 check_str = vals[0][0:1]
                 index = vals[0][1:]
-                if check_str == ListView.char_ct:
-                    value = ListView.chat_cf + index
+                if check_str == ListViewUI.char_ct:
+                    value = ListViewUI.chat_cf + index
                 else:
-                    value = ListView.char_ct + index
+                    value = ListViewUI.char_ct + index
                 col_str = '#%d' % 1
                 self.tree.set(it, column=col_str, value=value)  # 修改单元格的值
 
@@ -720,7 +649,7 @@ class ListView:
         清除一行的内容
         :param item: 行对象
         """
-        self.change_check_by_item_char(item, ListView.chat_cf)
+        self.change_check_by_item_char(item, ListViewUI.chat_cf)
         vals = []
         for i in range(0, self.cols_count):
             vals.append('')
@@ -778,7 +707,7 @@ class ListView:
             self.clear_row_by_item(items[row_num - 1])
             # 第二步，将目标行以后的数据全部上移
             for i in range(row_num, self.rows_count):
-                check_char_temp = self.get_checkchar_by_item(items[i])
+                check_char_temp = self.get_check_char_by_item(items[i])
                 vals_temp = self.get_row_vals_by_item(items[i])
                 self.change_row_check_vals_by_item_char(
                     items[i - 1], check_char_temp, vals_temp)
@@ -806,7 +735,7 @@ class ListView:
             # 循环移动插入行后面的所有行
             items = self.tree.get_children()
             for i in range(len(items) - 1, row_num - 1, -1):
-                check_char_temp = self.get_checkchar_by_item(items[i - 1])
+                check_char_temp = self.get_check_char_by_item(items[i - 1])
                 vals_temp = self.get_row_vals_by_item(items[i - 1])
                 self.change_row_check_vals_by_item_char(
                     items[i], check_char_temp, vals_temp)
@@ -832,7 +761,7 @@ class ListView:
         :param target_num:
         """
         target_item = self.get_row(target_num)
-        target_check_str = self.get_checkchar_by_item(target_item)
+        target_check_str = self.get_check_char_by_item(target_item)
         target_vals = self.get_row_vals_by_item(target_item)
         to_item = self.get_row(to_num)
         to_index = self.get_index_by_item(to_item)
@@ -858,78 +787,26 @@ class ListView:
         values1 = self.get_row_values_by_item(item1)
         values2 = self.get_row_values_by_item(item2)
 
-        check_char1 = self.get_checkchar_by_values(values1)
-        check_char2 = self.get_checkchar_by_values(values2)
+        check_char1 = self.get_check_char_by_values(values1)
+        check_char2 = self.get_check_char_by_values(values2)
         index1 = self.get_index_by_values(values1)
         index2 = self.get_index_by_values(values2)
 
         self.change_row_all_by_item_char_values(item1, check_char2, index1, values2)
         self.change_row_all_by_item_char_values(item2, check_char1, index2, values1)
 
-    def on_click(self, event):
+    def on_click(self):
         """
         行单击事件
         """
         self.change_check_on_select()
 
-    def on_db_click(self, event):
+    def on_db_click(self):
         item = self.tree.selection()  # 获取行对象
         # print("you clicked on ", tree.item(item, "values"))
 
         # curItem = tree.focus()
         print(self.tree.item(item, 'values'))
 
-    # 执行按钮
-    @staticmethod
-    def do_task():
-        lv.change_cell(1, 1, '修改1行1列')
-        # TODO 调试
-        print('你选中的行是：', lv.get_index_select())
-        print('1行的复选状态', lv.get_check_bl(1))
-        print("总行数：", lv.rows_count)
-        print("总列数：", lv.cols_count)
-        value = ['aa', 'dd', 'cc', 'ee']
-        print("改变了第3行的值")
-        lv.change_row_by_vals(3, value)
-        print("第4行与第5行的值作了交换")
-        lv.exchange_row(4, 5)
-        print("将第6行的值复制到了第7行")
-        lv.copy_row(6, 7)
-        print("将第8行前插入行")
-        vals = ['xxxx']
-        lv.inset_row_bl(8, vals, False)
-        print("清除9行的数据")
-        lv.clear_row(9)
-        print("删除第50行")
-        lv.delete_row(50)
-        print("删除第2列")
-        lv.clear_col(2)
-
-        # self.exchange_row(3, 2)
-        # check_all()
-        # check_all_not()
-        # self.check_all_un()
-        # change_check(2, True)
-if __name__ == '__main__':
-    # 定义窗口---------------------------------------
-    win = Tk()
-    win.title('测试窗口')
-    win.geometry("%dx%d+%d+%d" % (1000, 800, 0, 0))
-
-    # 定义listview---------------------------------------
-    lv = ListView(win, x=100, y=100, width=850, height=550)
-    lv.add_column('dish_id')
-    lv.add_column('dish_name')
-    lv.add_column('dish_price')
-    lv.add_column('dish_description')
-    lv.set_rows_height_fontsize()
-    lv.set_head_font()
-    lv.create_listview()
-    menu = connection.ConnectDatabase().query_menu()
-    for m in menu:
-        dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
-        lv.add_row(False, dish)
-    # do_button = Button(win, text='测试', command=ListView.do_task)
-    # do_button.place(height=22, width=160, x=100, y=600)
-
-    win.mainloop()
+    def add_shopping_cart(self):
+        print(self.get_index_select())

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 # author：xxp time:2022/11/5
-import sample.entity.Entity as Entity
-import sample.dao.connect as connection
-import sample.gui.login as test
+from sample.dao.connect import ConnectDatabase
+from sample.gui.customer import CustomerUI
+from sample.gui.login import LoginUI
+
 if __name__ == '__main__':
-    test.LoginUI()
+    # LoginUI()
+    CustomerUI("11", "11")
+    # print(ConnectDatabase().query_restaurant())
     # db=connection.ConnectDatabase()
     # # print(type(db.query_customer()[0]))
     # my_database = connection.ConnectDatabase()

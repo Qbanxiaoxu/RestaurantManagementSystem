@@ -3,6 +3,8 @@
 import docs.conf as configure
 import pymysql.cursors
 
+from sample.entity.Entity import Customer
+
 
 class ConnectDatabase:
     __customer_number = 0
@@ -215,10 +217,10 @@ class ConnectDatabase:
         )
         with connection:
             with connection.cursor() as cursor:
-                sql = "select * from restaurant"
+                sql = "select count(*) from restaurant"
                 cursor.execute(sql)
                 result = cursor.fetchone()
-                self.__restaurant_table_number = result["count(*)"]
+                self.__restaurant_number = result["count(*)"]
         return self.__restaurant_number
 
     def get_table_number(self):
@@ -481,12 +483,23 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    # def delete_shopping_cart(self, shopping_cart):
-    #     with self.connection.cursor() as cursor:
-    #         sql = ""
-    #         value = ()
-    #         cursor.execute(sql, value)
-    #     self.connection.commit()
+    @staticmethod
+    def delete_shopping_cart(shopping_cart_all_id):
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            with connection.cursor() as cursor:
+                for shopping_cart_id in shopping_cart_all_id:
+                    sql = "DELETE FROM shopping_cart WHERE shopping_cart.shopping_cart_id=%s"
+                    value = shopping_cart_id
+                    cursor.execute(sql, value)
+                    connection.commit()
 
     # Modify operation
 
@@ -688,3 +701,27 @@ class ConnectDatabase:
                     is_employee = True
                     break
         return is_customer, is_employee
+
+    @staticmethod
+    def find_customer(name, password):
+        customer = Customer(0, '', '', '')
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "select * from customer where customer_name=%s and customer_password=%s"
+                values = (name, password)
+                cursor.execute(sql, values)
+                result = cursor.fetchone()
+        if result:
+            customer.customer_id = result["customer_id"]
+            customer.customer_name = result["customer_name"]
+            customer.customer_password = result["customer_password"]
+            customer.contact_info = result["contact_info"]
+        return customer
