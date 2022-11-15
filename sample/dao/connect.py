@@ -242,6 +242,12 @@ class ConnectDatabase:
     # def get_shopping_cart_number(self):
     #
     #     return self.__shopping_cart_number
+    def get_dish_price(self, dish_id):
+        menu = self.query_menu()
+        for dish in menu:
+            if dish['dish_id'] == dish_id:
+                return dish['dish_price']
+        return 0
 
     # Add operation
     @staticmethod

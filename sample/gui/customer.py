@@ -10,7 +10,7 @@ import os
 
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import Customer
-from sample.gui.listview import ListViewUI
+from sample.gui.formui import RestaurantUI, ShoppingCartUI
 
 
 class CustomerUI:
@@ -83,17 +83,14 @@ class CustomerUI:
                                                   )
         btn_modify_personal_info.place(x=0, y=230, width=150, height=90)
 
-        btn_place_order = tkinter.Button(self.frame_operation, text='place order')
+        btn_place_order = tkinter.Button(self.frame_operation, text='display order form')
         btn_place_order.place(x=0, y=340, width=150, height=90)
 
-        btn_check_order = tkinter.Button(self.frame_operation, text='check order')
+        btn_check_order = tkinter.Button(self.frame_operation, text='null')
         btn_check_order.place(x=0, y=450, width=150, height=90)
         # 操作结果容器
         self.frame_result = tkinter.Frame(self.window_customer, bg='#F0F8FF', width=850, height=550)
         self.frame_result.grid(column=15, row=15, columnspan=85, rowspan=55)
-        # 复选框标识符
-        self.char_ct = '☑'  # 复选框选中标识符
-        self.chat_cf = '□'  # 复选框未选中标识符
 
         self.style = ttk.Style()
         self.style.configure("Treeview.Heading", font=("黑体", 15))
@@ -103,41 +100,11 @@ class CustomerUI:
 
     def choose(self):
         self.destroy_result()
-        ListViewUI(self.frame_result, 'menu')
-
-        self.window_customer.update()
+        restaurant = RestaurantUI(self.frame_result)
 
     def shopping_cart(self):
         self.destroy_result()
-
-        tv_shopping_cart = ttk.Treeview(self.frame_result, columns=("1", "2", "3"), show='headings', height=20)
-        tv_shopping_cart.place(x=0, y=0, width=800, height=450)
-
-        tv_shopping_cart.heading(1, text='dish_id')
-        tv_shopping_cart.heading(2, text='dish_num')
-        tv_shopping_cart.heading(3, text='dish_sum_price')
-
-        sb_ver = tkinter.Scrollbar(self.frame_result, orient=VERTICAL)
-        sb_ver.place(x=800, y=0, height=450)
-        tv_shopping_cart.config(yscrollcommand=sb_ver.set)
-        sb_ver.config(command=tv_shopping_cart.yview)
-
-        sb_hor = tkinter.Scrollbar(self.frame_result, orient=HORIZONTAL)
-        sb_hor.place(x=0, y=450, width=800)
-        tv_shopping_cart.config(xscrollcommand=sb_hor.set)
-        sb_hor.config(command=tv_shopping_cart.xview)
-
-        shopping_cart_info = ConnectDatabase().query_shopping_cart()
-        if shopping_cart_info:
-            for i, sc in enumerate(shopping_cart_info):
-                tv_shopping_cart.insert(parent='', index=i, iid=str(i),
-                                        values=(sc["dish_id"], sc["dish_num"], sc["dish_sum_price"]))
-
-        btn_delete = tkinter.Button(self.frame_result, text="delete shopping cart", command=self.delete_shopping_cart)
-        btn_delete.place(x=300, y=480, width=200, height=50)
-
-    def delete_shopping_cart(self):
-        ConnectDatabase().delete_shopping_cart(self.shopping_cart_all_id)
+        shoppingcart = ShoppingCartUI(self.frame_result)
 
     def modify_own_information(self):
         self.destroy_result()
