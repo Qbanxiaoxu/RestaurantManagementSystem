@@ -21,52 +21,6 @@ class ListViewUI:
         self.__created = False  # 控制表格创建后，停用部分方法
         self.__check_boxes = True  # 标识是否有复选框功能
         self.__show_index = True  # 标识是否显示行号
-        # self.menu_view = None
-        # type_view=""
-        #
-        # if type_view == 'menu':
-        #     self.add_column('dish_id')
-        #     self.add_column('dish_name')
-        #     self.add_column('dish_price')
-        #     self.add_column('dish_description')
-        #     self.set_rows_height_fontsize()
-        #     self.set_head_font()
-        #     self.create_listview()
-        #
-        #     self.menu = connection.ConnectDatabase().query_menu()
-        #     for m in self.menu:
-        #         dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
-        #         self.add_row(False, dish)
-        #     btn_modify = tkinter.Button(self.frame, text="Add to shopping cart", command=self.add_shopping_cart)
-        #     btn_modify.place(x=300, y=480, width=200, height=50)
-        # if type_view == 'restaurant':
-        #     self.add_column('restaurant_id')
-        #     self.add_column('restaurant_name')
-        #     self.add_column('restaurant_address')
-        #     self.set_rows_height_fontsize()
-        #     self.set_head_font()
-        #     self.create_listview()
-        #     self.restaurants = connection.ConnectDatabase().query_restaurant()
-        #     for r in self.restaurants:
-        #         restaurant = [r['restaurant_id'], r['restaurant_name'], r['restaurant_address']]
-        #         self.add_row(False, restaurant)
-        #     btn_modify = tkinter.Button(self.frame, text="Enter the restaurant", command=self.enter_restaurant)
-        #     btn_modify.place(x=300, y=480, width=200, height=50)
-        #     self.restaurant_id = 0
-        # if type_view == 'shoppingcart':
-        #     self.add_column('shopping_cart_id')
-        #     self.add_column('dish_id')
-        #     self.add_column('dish_num')
-        #     self.add_column('dish_sum_price')
-        #     self.set_rows_height_fontsize()
-        #     self.set_head_font()
-        #     self.create_listview()
-        #     self.shopping_carts = connection.ConnectDatabase().query_shopping_cart()
-        #     for s in self.shopping_carts:
-        #         shopping_cart = [s['shopping_cart_id'], s['dish_id'], s['dish_num'], s['dish_sum_price']]
-        #         self.add_row(False, shopping_cart)
-        #     btn_modify = tkinter.Button(self.frame, text="place order", command=self.enter_restaurant)
-        #     btn_modify.place(x=300, y=480, width=200, height=50)
 
     def create_listview(self):
         if self.__created:
@@ -183,18 +137,19 @@ class ListViewUI:
         s.configure('Treeview', rowheight=height)
 
     @staticmethod
-    def set_rows_fontsize(font=15):
+    def set_rows_fontsize(font_i=15):
         """
-        设置字号
-        :param font: 字号
+
+        @param font_i:
+        @return:
         """
         s = ttk.Style()
-        s.configure('Treeview', font=(None, font))
+        s.configure('Treeview', font=(None, font_i))
 
     @staticmethod
-    def set_rows_height_fontsize(height=30, font=15):
+    def set_rows_height_fontsize(height=30, font_i=15):
         s = ttk.Style()
-        s.configure('Treeview', rowheight=height, font=(None, font))
+        s.configure('Treeview', rowheight=height, font=(None, font_i))
 
     def get_row(self, row_num):
         """
@@ -343,10 +298,6 @@ class ListViewUI:
         return self.get_check_bl_by_item(item)
 
     def get_check_char_by_values(self, values):
-        """
-        获取某一行的勾选符号
-        :param item: 行数据（包含行头部信息）
-        """
         if self.__check_boxes:
             check_str = values[0][0:1]
         else:
@@ -362,33 +313,29 @@ class ListViewUI:
         return self.get_check_char_by_values(values)
 
     def get_check_char(self, row_num):
-        """
-        获取某一行的勾选符号
-        :param item: 行对象
-        """
         item = self.get_row(row_num)
         return self.get_check_char_by_item(item)
 
-    def change_check_by_item(self, item, check_bl=True):
-        """
-        修改一行的复选状态
-        :param item: 行对象
-        :param check_bl:复选状态
-        """
-        if self.__check_boxes:
-            check_char = self.check_bl2char(check_bl)
-            index = self.get_index_by_item(item)
-            value = '%s%s' % (check_char, index)
-            col_str = '#%d' % 1
-            self.tree.set(item, column=col_str, value=value)
-
-    def change_check_by_item_char(self, item, check_char=char_ct):
-        if self.__check_boxes:
-            index = self.get_index_by_item(item)
-            value = '%s%s' % (check_char, index)
-            col_str = '#%d' % 1
-            self.tree.set(item, column=col_str, value=value)
-
+    # def change_check_by_item(self, item, check_bl=True):
+    #     """
+    #     修改一行的复选状态
+    #     :param item: 行对象
+    #     :param check_bl:复选状态
+    #     """
+    #     if self.__check_boxes:
+    #         check_char = self.check_bl2char(check_bl)
+    #         index = self.get_index_by_item(item)
+    #         value = '%s%s' % (check_char, index)
+    #         col_str = '#%d' % 1
+    #         self.tree.set(item, column=col_str, value=value)
+    #
+    # def change_check_by_item_char(self, item, check_char=char_ct):
+    #     if self.__check_boxes:
+    #         index = self.get_index_by_item(item)
+    #         value = '%s%s' % (check_char, index)
+    #         col_str = '#%d' % 1
+    #         self.tree.set(item, column=col_str, value=value)
+    #
     def exchange_check_by_item(self, item):
         """
         变换一行的复选状态
@@ -422,110 +369,111 @@ class ListViewUI:
         else:
             self.exchange_check_by_item(item)
 
-    def change_head_by_item(self, item, check_char, index):
-        """
-        修改一行的头部信息
-        :param item:
-        :param check_char: 复选框符号
-        :param index: 行号
-        """
-        value = '%s%s' % (check_char, index)
-        col_str = '#%d' % 1
-        self.tree.set(item, column=col_str, value=value)
-
-    def change_head(self, row_num, check_char, index):
-        """
-        修改一行的头部信息
-        :param check_char: 复选框符号
-        :param index: 行号
-        """
-        item = self.get_row(row_num)
-        value = '%s%s' % (check_char, index)
-        col_str = '#%d' % 1
-        self.tree.set(item, column=col_str, value=value)
-
-    def change_row_by_vals_item(self, item, vals, check_char=char_ct):
-        """
-        修改一整行的值
-        :param check_char:
-        :param item: 行对象
-        :param vals: 表格值列表（vals不包含行头部信息）
-        """
-        self.change_check_by_item_char(item, check_char)
-        end_col = len(vals)
-        if self.cols_count < len(vals):
-            end_col = self.cols_count
-        for i in range(0, end_col):
-            col_str = '#%d' % (i + 2)
-            self.tree.set(item, column=col_str, value=vals[i])
-
-    def change_row_by_vals(self, row_num, vals, check_char=char_ct):
-        """
-        修改一整行的值
-        :param check_char:
-        :param row_num: 行号
-        :param vals: 值列表
-        """
-        item = self.get_row(row_num)
-        self.change_row_by_vals_item(item, vals, check_char)
-
-    def change_row_check_values_by_item(self, item, values):
-        """
-        修改一整行的值
-        :param item: 行对象
-        :param values: 表格值列表（包含行头部信息）
-        """
-        end_col = len(values) - 1
-        if self.cols_count < len(values) - 1:
-            end_col = self.cols_count
-        # 写入头部信息
-        check_char = self.get_check_char_by_values(values)
-        index = self.get_index_by_item(item)
-        self.change_head_by_item(item, check_char, index)
-        # 写入行表格内容
-        for i in range(0, end_col):
-            col_str = '#%d' % (i + 2)
-            self.tree.set(item, column=col_str, value=values[i + 1])
-
-    def change_row_check_vals_by_item_char(self, item, check_char, vals):
-        """
-        修改一整行的值
-        :param item: 行对象
-        :param check_char:复选框符号
-        :param vals: 表格值列表（不包含行头部信息）
-        :return:
-        """
-        end_col = len(vals)
-        if self.cols_count < len(vals):
-            end_col = self.cols_count
-        # 写入头部信息
-        index = self.get_index_by_item(item)
-        self.change_head_by_item(item, check_char, index)
-        # 写入行表格内容
-        for i in range(0, end_col):
-            col_str = '#%d' % (i + 2)
-            self.tree.set(item, column=col_str, value=vals[i])
-
-    def change_row_all_by_item_char(
-            self, item, check_char, index, vals):
-        """
-        修改一整行的值
-        :param item: 行对象
-        :param check_char: 复选框符号
-        :param index: 行号
-        :param vals: 表格值列表（不包含行头部信息）
-        :return:
-        """
-        end_col = len(vals)
-        if self.cols_count < len(vals):
-            end_col = self.cols_count
-        # 写入头部信息
-        self.change_head_by_item(item, check_char, index)
-        # 写入行表格内容
-        for i in range(0, end_col):
-            col_str = '#%d' % (i + 2)
-            self.tree.set(item, column=col_str, value=vals[i])
-
+    #
+    # def change_head_by_item(self, item, check_char, index):
+    #     """
+    #     修改一行的头部信息
+    #     :param item:
+    #     :param check_char: 复选框符号
+    #     :param index: 行号
+    #     """
+    #     value = '%s%s' % (check_char, index)
+    #     col_str = '#%d' % 1
+    #     self.tree.set(item, column=col_str, value=value)
+    #
+    # def change_head(self, row_num, check_char, index):
+    #     """
+    #     修改一行的头部信息
+    #     :param check_char: 复选框符号
+    #     :param index: 行号
+    #     """
+    #     item = self.get_row(row_num)
+    #     value = '%s%s' % (check_char, index)
+    #     col_str = '#%d' % 1
+    #     self.tree.set(item, column=col_str, value=value)
+    #
+    # def change_row_by_vals_item(self, item, vals, check_char=char_ct):
+    #     """
+    #     修改一整行的值
+    #     :param check_char:
+    #     :param item: 行对象
+    #     :param vals: 表格值列表（vals不包含行头部信息）
+    #     """
+    #     self.change_check_by_item_char(item, check_char)
+    #     end_col = len(vals)
+    #     if self.cols_count < len(vals):
+    #         end_col = self.cols_count
+    #     for i in range(0, end_col):
+    #         col_str = '#%d' % (i + 2)
+    #         self.tree.set(item, column=col_str, value=vals[i])
+    #
+    # def change_row_by_vals(self, row_num, vals, check_char=char_ct):
+    #     """
+    #     修改一整行的值
+    #     :param check_char:
+    #     :param row_num: 行号
+    #     :param vals: 值列表
+    #     """
+    #     item = self.get_row(row_num)
+    #     self.change_row_by_vals_item(item, vals, check_char)
+    #
+    # def change_row_check_values_by_item(self, item, values):
+    #     """
+    #     修改一整行的值
+    #     :param item: 行对象
+    #     :param values: 表格值列表（包含行头部信息）
+    #     """
+    #     end_col = len(values) - 1
+    #     if self.cols_count < len(values) - 1:
+    #         end_col = self.cols_count
+    #     # 写入头部信息
+    #     check_char = self.get_check_char_by_values(values)
+    #     index = self.get_index_by_item(item)
+    #     self.change_head_by_item(item, check_char, index)
+    #     # 写入行表格内容
+    #     for i in range(0, end_col):
+    #         col_str = '#%d' % (i + 2)
+    #         self.tree.set(item, column=col_str, value=values[i + 1])
+    #
+    # def change_row_check_vals_by_item_char(self, item, check_char, vals):
+    #     """
+    #     修改一整行的值
+    #     :param item: 行对象
+    #     :param check_char:复选框符号
+    #     :param vals: 表格值列表（不包含行头部信息）
+    #     :return:
+    #     """
+    #     end_col = len(vals)
+    #     if self.cols_count < len(vals):
+    #         end_col = self.cols_count
+    #     # 写入头部信息
+    #     index = self.get_index_by_item(item)
+    #     self.change_head_by_item(item, check_char, index)
+    #     # 写入行表格内容
+    #     for i in range(0, end_col):
+    #         col_str = '#%d' % (i + 2)
+    #         self.tree.set(item, column=col_str, value=vals[i])
+    #
+    # def change_row_all_by_item_char(
+    #         self, item, check_char, index, vals):
+    #     """
+    #     修改一整行的值
+    #     :param item: 行对象
+    #     :param check_char: 复选框符号
+    #     :param index: 行号
+    #     :param vals: 表格值列表（不包含行头部信息）
+    #     :return:
+    #     """
+    #     end_col = len(vals)
+    #     if self.cols_count < len(vals):
+    #         end_col = self.cols_count
+    #     # 写入头部信息
+    #     self.change_head_by_item(item, check_char, index)
+    #     # 写入行表格内容
+    #     for i in range(0, end_col):
+    #         col_str = '#%d' % (i + 2)
+    #         self.tree.set(item, column=col_str, value=vals[i])
+    #
     # def change_row_all_by_item_char_vals(
     #         self, item, check_char, index, vals):
     #     """
@@ -544,7 +492,7 @@ class ListViewUI:
     #     for i in range(0, end_col):
     #         col_str = '#%d' % (i + 2)
     #         self.tree.set(item, column=col_str, value=vals[i])
-
+    #
     # def change_row_all_by_item_bl_vals(
     #         self, item, check_bl, index, vals):
     #     """
@@ -555,7 +503,7 @@ class ListViewUI:
     #     """
     #     check_char = self.check_bl2char(check_bl)
     #     self.change_row_all_by_item_char_vals(item, check_char, index, vals)
-
+    #
     # def change_row_all_by_item_char_values(
     #         self, item, check_char, index, values):
     #     end_col = len(values) - 1
@@ -567,7 +515,7 @@ class ListViewUI:
     #     for i in range(0, end_col):
     #         col_str = '#%d' % (i + 2)
     #         self.tree.set(item, column=col_str, value=values[i + 1])
-
+    #
     # def change_row_all_by_item_bl_values(
     #         self, item, check_bl, index, values):
     #     """
@@ -579,7 +527,7 @@ class ListViewUI:
     #     """
     #     check_char = self.check_bl2char(check_bl)
     #     self.change_row_all_by_item_char_values(item, check_char, index, values)
-
+    #
     # def change_row_all_by_item_bl(
     #         self, item, check_bl, index, vals):
     #     """
@@ -592,7 +540,7 @@ class ListViewUI:
     #     """
     #     check_char = self.check_bl2char(check_bl)
     #     self.change_row_all_by_item_char(item, check_char, index, vals)
-
+    #
     # def change_row_check_vals(self, row_num, values):
     #     """
     #     修改一整行的值
@@ -601,7 +549,7 @@ class ListViewUI:
     #     """
     #     item = self.get_row(row_num)
     #     self.change_row_check_values_by_item(item, values)
-
+    #
     # def change_cell_by_item(self, item, col_num, value):
     #     """
     #     修改单个单元格的值
@@ -653,18 +601,18 @@ class ListViewUI:
         else:
             return False
 
-    def check_all(self):
-        """
-        将所有行勾选
-        """
-        if self.__check_boxes:
-            items = self.tree.get_children()
-            for it in items:
-                vals = self.tree.item(it, 'values')
-                index = vals[0][1:]
-                value = '☑%s' % index
-                col_str = '#%d' % 1
-                self.tree.set(it, column=col_str, value=value)  # 修改单元格的值
+    # def check_all(self):
+    #     """
+    #     将所有行勾选
+    #     """
+    #     if self.__check_boxes:
+    #         items = self.tree.get_children()
+    #         for it in items:
+    #             vals = self.tree.item(it, 'values')
+    #             index = vals[0][1:]
+    #             value = '☑%s' % index
+    #             col_str = '#%d' % 1
+    #             self.tree.set(it, column=col_str, value=value)  # 修改单元格的值
 
     # def check_all_not(self):
     #     """
@@ -795,7 +743,7 @@ class ListViewUI:
     #         self.clear_row_by_item(items[row_num - 1])
     #         self.change_row_check_vals_by_item_char(
     #             items[row_num - 1], check_char, vals)
-
+    #
     # def inset_row_bl(self, row_num, vals, check_bl=True):
     #     """
     #     在指定行前插入行
@@ -805,7 +753,7 @@ class ListViewUI:
     #     """
     #     check_char = self.check_bl2char(check_bl)
     #     self.inset_row(row_num, vals, check_char)
-
+    #
     # def copy_row(self, target_num, to_num):
     #     """
     #     将一行复制到另外一行

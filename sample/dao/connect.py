@@ -3,7 +3,7 @@
 import docs.conf as configure
 import pymysql.cursors
 
-from sample.entity.Entity import Customer
+from sample.entity.Entity import Customer, Employee
 
 
 class ConnectDatabase:
@@ -380,15 +380,16 @@ class ConnectDatabase:
         )
         with connection:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO shopping_cart (dish_id, dish_num, dish_sum_price) " \
-                      "VALUES (%s,%s,%s)"
-                values = (shopping_cart.dish_id, shopping_cart.dish_num, shopping_cart.dish_sum_price)
+                sql = "INSERT INTO shopping_cart (dish_id, dish_num, dish_sum_price,restaurant_id) " \
+                      "VALUES (%s,%s,%s,%s)"
+                values = (shopping_cart.dish_id, shopping_cart.dish_num,
+                          shopping_cart.dish_sum_price, shopping_cart.restaurant_id)
                 cursor.execute(sql, values)
                 connection.commit()
 
     # Delete operation
     @staticmethod
-    def delete_customer(customer):
+    def delete_customer(customer_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -400,12 +401,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM customer WHERE customer_id=%s"
-                value = customer.customer_id
+                value = customer_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_employee(employee):
+    def delete_employee(employee_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -417,12 +418,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM employee WHERE employee_id=%s"
-                value = employee.employee_id
+                value = employee_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_menu(menu):
+    def delete_menu(dish_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -434,12 +435,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM menu WHERE dish_id=%s"
-                value = menu.dish_id
+                value = dish_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_order(order):
+    def delete_order(order_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -451,12 +452,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM orders WHERE order_id=%s"
-                value = order.order_id
+                value = order_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_restaurant(restaurant):
+    def delete_restaurant(restaurant_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -468,12 +469,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM restaurant WHERE restaurant_id=%s"
-                value = restaurant.restaurant_id
+                value = restaurant_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_restaurant_table(restaurant_table):
+    def delete_restaurant_table(table_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -485,12 +486,12 @@ class ConnectDatabase:
         with connection:
             with connection.cursor() as cursor:
                 sql = "DELETE FROM restaurant_table WHERE table_id=%s"
-                value = restaurant_table.teble_id
+                value = table_id
                 cursor.execute(sql, value)
                 connection.commit()
 
     @staticmethod
-    def delete_shopping_cart(shopping_cart_all_id):
+    def delete_shopping_cart():
         connection = pymysql.connect(
             host=configure.mysql_database_host,
             user=configure.mysql_database_user,
@@ -501,11 +502,9 @@ class ConnectDatabase:
         )
         with connection:
             with connection.cursor() as cursor:
-                for shopping_cart_id in shopping_cart_all_id:
-                    sql = "DELETE FROM shopping_cart WHERE shopping_cart.shopping_cart_id=%s"
-                    value = shopping_cart_id
-                    cursor.execute(sql, value)
-                    connection.commit()
+                sql = "TRUNCATE shopping_cart"
+                cursor.execute(sql)
+                connection.commit()
 
     # Modify operation
 
@@ -567,11 +566,6 @@ class ConnectDatabase:
                 if employee.gender:
                     sql = "UPDATE employee SET gender = %s WHERE employee_id = %s"
                     values = (employee.gender, employee.employee_id)
-                    cursor.execute(sql, values)
-                    connection.commit()
-                if employee.id_number:
-                    sql = "UPDATE employee SET id_number = %s WHERE employee_id = %s"
-                    values = (employee.id_number, employee.employee_id)
                     cursor.execute(sql, values)
                     connection.commit()
                 if employee.position:
@@ -708,6 +702,22 @@ class ConnectDatabase:
                     break
         return is_customer, is_employee
 
+    def get_employee_position(self, username, password):
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            employees_info = self.query_employee()
+            for employee in employees_info:
+                if username == employee["employee_name"] and password == employee["employee_password"]:
+                    return employee["employee_position"]
+        return "mei zhao dao"
+
     @staticmethod
     def find_customer(name, password):
         customer = Customer(0, '', '', '')
@@ -731,3 +741,71 @@ class ConnectDatabase:
             customer.customer_password = result["customer_password"]
             customer.contact_info = result["contact_info"]
         return customer
+
+    @staticmethod
+    def find_manager(name, password, position):
+        employee = Employee(0, '', '', '', '', '', '', '', 0.0)
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "select * from employee where employee_name=%s and employee_password=%s and position=%s"
+                values = (name, password, position)
+                cursor.execute(sql, values)
+                result = cursor.fetchone()
+        if result:
+            employee.employee_id = result["employee_id"]
+            employee.employee_name = result["employee_name"]
+            employee.employee_password = result["employee_password"]
+            employee.id_number = result["id_number"]
+            employee.contact_info = result["contact_info"]
+            employee.gender = result["gender"]
+            employee.position = result["position"]
+            employee.work_state = result["work_state"]
+            employee.basic_salary = result["basic_salary"]
+        return employee
+
+    @staticmethod
+    def check(check_id, form_type):
+        connection = pymysql.connect(
+            host=configure.mysql_database_host,
+            user=configure.mysql_database_user,
+            password=configure.mysql_database_password,
+            database=configure.mysql_database_name,
+            cursorclass=pymysql.cursors.DictCursor,
+            charset=configure.mysql_database_charset
+        )
+        with connection:
+            with connection.cursor() as cursor:
+                if form_type == 'restaurant':
+                    sql = "select * from restaurant where restaurant_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
+                if form_type == 'menu':
+                    sql = "select * from menu where dish_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
+                if form_type == 'employee':
+                    sql = "select * from employee where employee_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
+                if form_type == 'customer':
+                    sql = "select * from customer where customer_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
+                if form_type == 'order':
+                    sql = "select * from orders where order_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
+        return result

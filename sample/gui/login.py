@@ -11,6 +11,13 @@ import sample.dao.connect as connection
 import sample.gui.signup as new_signup
 import os
 
+from sample.gui.cashier import CashierUI
+from sample.gui.chef import ChefUI
+from sample.gui.cleaner import CleanerUI
+from sample.gui.customer import CustomerUI
+from sample.gui.manager import ManagerUI
+from sample.gui.waiter import WaiterUI
+
 
 class LoginUI:
     def __init__(self):
@@ -70,13 +77,29 @@ class LoginUI:
                 tkinter.messagebox.showinfo(title='welcome',
                                             message='Welcome!' + username)
                 self.window_login.destroy()
-                # TO DO 打开顾客界面
+                # TODO 打开顾客界面
+                CustomerUI(username, password)
             if is_employee_signin:
                 tkinter.messagebox.showinfo(title='welcome',
                                             message='Welcome!' + username)
                 self.window_login.destroy()
-                # TO DO 打开雇员界面
-                # TO DO 判断雇员身份跳转不同界面
+                # TODO 打开雇员界面
+                # TODO 判断雇员身份跳转不同界面
+                # positions={'manager':1,'waiter':2,'cashier':3,'cleaner':5}
+                position = connection.ConnectDatabase().get_employee_position(username, password)
+                if position == 'manager':
+                    ManagerUI(username, password, position)
+                elif position == 'cashier':
+                    CashierUI(username, password)
+                elif position == 'waiter':
+                    WaiterUI(username, password)
+                elif position == 'chef':
+                    ChefUI(username, password)
+                elif position == 'cleaner':
+                    CleanerUI(username, password)
+                else:
+                    tkinter.messagebox.showerror('wrong', 'mei zhao dao')
+
             if not is_customer_signin and not is_employee_signin:
                 is_signup = tkinter.messagebox.askyesno('Sign up?',
                                                         'You have not registered yet, do you want to register now?')

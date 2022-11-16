@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 # author：xxp time:2022/11/5
+import time
+import datetime
+
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import ShoppingCart
 from sample.gui.customer import CustomerUI
 from sample.gui.login import LoginUI
+from sample.gui.manager import ManagerUI
 
 if __name__ == '__main__':
     # LoginUI()
-    CustomerUI("11", "11")
+    ManagerUI('Liao Lan', 'e14ENLuh7g', 'manager')
+
+    # time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # print(time_now)
+    # CustomerUI("xx", "j")
     # shopping_cart_add = []
     # shopping_cart = [('☑1', '1', 'Rachel Phillips', '665.81', '5x4Chr59yw'),
     #                  ('☑2', '2', 'Qin Shihan', '848.69', 'MjzToZsanr'),
@@ -29,8 +37,7 @@ if __name__ == '__main__':
     #         shopping_cart_temp.append(dish)
     #         s = ShoppingCart(shopping_cart_id=None, dish_id=int(dish[1]), dish_num=0, dish_sum_price=0)
     #         sh.append(s)
-            # dict_temp = {"dish_id": int(dish[1]), "dish_num": 0, "dish_sum_price": 0}
-
+    # dict_temp = {"dish_id": int(dish[1]), "dish_num": 0, "dish_sum_price": 0}
 
     # print(len(sh))
     # # for a in shopping_cart_add:

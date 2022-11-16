@@ -10,11 +10,13 @@ import os
 
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import Customer
-from sample.gui.formui import RestaurantUI, ShoppingCartUI
+from sample.gui.form import RestaurantUI, ShoppingCartUI, OrderUI
 
 
 class CustomerUI:
     def __init__(self, username, password):
+        self.username = username
+        self.password = password
         self.window_customer = tkinter.Tk()
 
         self.shopping_cart_all_id = []
@@ -42,28 +44,16 @@ class CustomerUI:
         canvas.create_image(0, 0, anchor="nw", image=image_file)
         canvas.place(x=0, y=0, width=150, height=150)
 
-        me = ConnectDatabase.find_customer(username, password)
-        # 顾客信息
+        self.id = 0
+        self.contact_info = None
         self.password_modify = None
         self.contact_info_modify = None
         self.username_modify = None
-        self.username = me.customer_name
-        self.password = me.customer_password
-        self.id = me.customer_id
-        self.contact_info = me.contact_info
 
-        tkinter.Label(self.frame_personal_info, text="ID:", font=("宋体", 16)).place(x=225, y=25, height=30)
-        tkinter.Message(self.frame_personal_info, text=self.id,
-                        font=("宋体", 16), width=200).place(x=325, y=25, height=30)
-
-        tkinter.Label(self.frame_personal_info, text="name:", font=("宋体", 16)).place(x=225, y=55, height=30)
-        tkinter.Message(self.frame_personal_info, text=self.username,
-                        font=("宋体", 16), width=200).place(x=325, y=55, height=30)
-
-        tkinter.Label(self.frame_personal_info, text="contact information:", font=("宋体", 16)).place(x=550, y=25,
-                                                                                                    height=30)
-        tkinter.Message(self.frame_personal_info, text=self.contact_info,
-                        font=("宋体", 16), width=200).place(x=800, y=25, height=30)
+        self.frame_detail = tkinter.Frame(self.frame_personal_info, bg="#F8F8FF",
+                                          highlightthickness=2, width=850, height=150)
+        self.frame_detail.place(x=150, y=0)
+        self.personal_information()
 
         """
         操作容器
@@ -83,7 +73,7 @@ class CustomerUI:
                                                   )
         btn_modify_personal_info.place(x=0, y=230, width=150, height=90)
 
-        btn_place_order = tkinter.Button(self.frame_operation, text='display order form')
+        btn_place_order = tkinter.Button(self.frame_operation, text='display orders', command=self.display_orders)
         btn_place_order.place(x=0, y=340, width=150, height=90)
 
         btn_check_order = tkinter.Button(self.frame_operation, text='null')
@@ -92,19 +82,41 @@ class CustomerUI:
         self.frame_result = tkinter.Frame(self.window_customer, bg='#F0F8FF', width=850, height=550)
         self.frame_result.grid(column=15, row=15, columnspan=85, rowspan=55)
 
-        self.style = ttk.Style()
-        self.style.configure("Treeview.Heading", font=("黑体", 15))
-        self.style.configure('Treeview', rowheight=30, font=(None, 15))
+        # self.style = ttk.Style()
+        # self.style.configure("Treeview.Heading", font=("黑体", 15))
+        # self.style.configure('Treeview', rowheight=30, font=(None, 15))
 
         self.window_customer.mainloop()
 
     def choose(self):
-        self.destroy_result()
         restaurant = RestaurantUI(self.frame_result)
 
     def shopping_cart(self):
-        self.destroy_result()
-        shoppingcart = ShoppingCartUI(self.frame_result)
+        shoppingcart = ShoppingCartUI(self.frame_result, self.id)
+
+    def personal_information(self):
+        me = ConnectDatabase.find_customer(self.username, self.password)
+        # 顾客信息
+        # self.password_modify = None
+        # self.contact_info_modify = None
+        # self.username_modify = None
+        self.username = me.customer_name
+        self.password = me.customer_password
+        self.id = me.customer_id
+        self.contact_info = me.contact_info
+
+        tkinter.Label(self.frame_detail, text="ID:", font=("宋体", 16)).place(x=75, y=25, height=30)
+        tkinter.Message(self.frame_detail, text=self.id,
+                        font=("宋体", 16), width=200).place(x=175, y=25, height=30)
+
+        tkinter.Label(self.frame_detail, text="name:", font=("宋体", 16)).place(x=75, y=55, height=30)
+        tkinter.Message(self.frame_detail, text=self.username,
+                        font=("宋体", 16), width=200).place(x=175, y=55, height=30)
+
+        tkinter.Label(self.frame_detail, text="contact information:", font=("宋体", 16)).place(x=400, y=25,
+                                                                                             height=30)
+        tkinter.Message(self.frame_detail, text=self.contact_info,
+                        font=("宋体", 16), width=200).place(x=650, y=25, height=30)
 
     def modify_own_information(self):
         self.destroy_result()
@@ -124,10 +136,22 @@ class CustomerUI:
         btn_modify = tkinter.Button(self.frame_result, text="commit changes", command=self.commit_changes)
         btn_modify.place(x=300, y=480, width=200, height=50)
 
+    def display_orders(self):
+        orders = OrderUI(self.frame_result, self.id)
+
     def commit_changes(self):
-        host = Customer(self.id, self.username_modify, self.password_modify, self.contact_info_modify)
+        self.username = self.username_modify.get()
+        self.password = self.password_modify.get()
+        self.contact_info = self.contact_info_modify.get()
+        host = Customer(self.id, self.username, self.password, self.contact_info)
+        personal_info = "id:" + str(
+            self.id) + "\nname:" + self.username + "\npassword:" + self.password + "\ncontact_info:" + self.contact_info
+        tkinter.messagebox.showinfo('modifying the result', personal_info)
         ConnectDatabase().modify_customer(host)
-        self.window_customer.update()
+        for widget in self.frame_detail.winfo_children():
+            widget.destroy()
+        tkinter.messagebox.showerror('Please log out and log in again', personal_info)
+        self.window_customer.destroy()
 
     def destroy_result(self):
         for widget in self.frame_result.winfo_children():

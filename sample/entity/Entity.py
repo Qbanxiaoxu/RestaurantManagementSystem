@@ -60,8 +60,7 @@ class RestaurantTable:
 
 @dataclass()
 class ShoppingCart:
-    shopping_cart_id: int = 0
-    dish_id: int = 0
-    dish_num: int = 0
-    dish_sum_price: float = 0
-
+    restaurant_id: int
+    dish_id: int
+    dish_num: int
+    dish_sum_price: float
