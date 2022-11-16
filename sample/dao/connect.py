@@ -548,7 +548,7 @@ class ConnectDatabase:
         )
         with connection:
             with connection.cursor() as cursor:
-                if employee.customer_name:
+                if employee.employee_name:
                     sql = "UPDATE employee SET employee_name = %s WHERE employee_id = %s"
                     values = (employee.employee_name, employee.employee_id)
                     cursor.execute(sql, values)
@@ -715,7 +715,7 @@ class ConnectDatabase:
             employees_info = self.query_employee()
             for employee in employees_info:
                 if username == employee["employee_name"] and password == employee["employee_password"]:
-                    return employee["employee_position"]
+                    return employee["position"]
         return "mei zhao dao"
 
     @staticmethod
@@ -743,7 +743,7 @@ class ConnectDatabase:
         return customer
 
     @staticmethod
-    def find_manager(name, password, position):
+    def find_employ(name, password, position):
         employee = Employee(0, '', '', '', '', '', '', '', 0.0)
         connection = pymysql.connect(
             host=configure.mysql_database_host,
@@ -783,6 +783,11 @@ class ConnectDatabase:
         )
         with connection:
             with connection.cursor() as cursor:
+                if form_type == 'restaurant_table':
+                    sql = "select * from restaurant_table where table_id=%s"
+                    value = check_id
+                    cursor.execute(sql, value)
+                    result = cursor.fetchone()
                 if form_type == 'restaurant':
                     sql = "select * from restaurant where restaurant_id=%s"
                     value = check_id

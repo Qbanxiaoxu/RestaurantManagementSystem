@@ -8,7 +8,7 @@ from sample.entity.Entity import Restaurant, Menu, Employee, Customer, Order
 from sample.gui.listview import ListViewUI
 
 
-class CRUD:
+class ManagerOperation:
     def __init__(self, frame, form_type):
         self.frame = frame
         self.form_type = form_type
@@ -250,8 +250,21 @@ class CRUD:
         is_delete = tkinter.messagebox.askyesno('Confirm delete?',
                                                 selected_info)
         if is_delete:
-            for select in selected:
-                ConnectDatabase.modify_order(select[1])
+            if self.form_type == 'restaurant':
+                for select in selected:
+                    ConnectDatabase.delete_restaurant(select[1])
+            if self.form_type == 'menu':
+                for select in selected:
+                    ConnectDatabase.delete_menu(select[1])
+            if self.form_type == 'order':
+                for select in selected:
+                    ConnectDatabase.delete_order(select[1])
+            if self.form_type == 'employee':
+                for select in selected:
+                    ConnectDatabase.delete_employee(select[1])
+            if self.form_type == 'customer':
+                for select in selected:
+                    ConnectDatabase.delete_customer(select[1])
             tkinter.messagebox.showinfo('delete', 'Successfully deleted!')
 
     def check(self):

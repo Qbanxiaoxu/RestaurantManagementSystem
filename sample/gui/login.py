@@ -85,18 +85,17 @@ class LoginUI:
                 self.window_login.destroy()
                 # TODO 打开雇员界面
                 # TODO 判断雇员身份跳转不同界面
-                # positions={'manager':1,'waiter':2,'cashier':3,'cleaner':5}
                 position = connection.ConnectDatabase().get_employee_position(username, password)
                 if position == 'manager':
                     ManagerUI(username, password, position)
                 elif position == 'cashier':
-                    CashierUI(username, password)
+                    CashierUI(username, password, position)
                 elif position == 'waiter':
-                    WaiterUI(username, password)
+                    WaiterUI(username, password, position)
                 elif position == 'chef':
-                    ChefUI(username, password)
+                    ChefUI(username, password, position)
                 elif position == 'cleaner':
-                    CleanerUI(username, password)
+                    CleanerUI(username, password, position)
                 else:
                     tkinter.messagebox.showerror('wrong', 'mei zhao dao')
 

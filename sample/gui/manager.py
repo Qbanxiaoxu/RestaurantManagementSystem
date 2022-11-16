@@ -10,8 +10,8 @@ import os
 
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import Employee
-from sample.gui.form import RestaurantUI, ShoppingCartUI, OrderUI
-from sample.gui.manageinfo import CRUD
+from sample.gui.customerui import RestaurantUI, ShoppingCartUI, OrderUI
+from sample.gui.managerui import ManagerOperation
 
 
 class ManagerUI:
@@ -93,22 +93,22 @@ class ManagerUI:
         self.window_manager.mainloop()
 
     def menu_info(self):
-        CRUD(self.frame_result, 'menu')
+        ManagerOperation(self.frame_result, 'menu')
 
     def restaurant_info(self):
-        CRUD(self.frame_result, 'restaurant')
+        ManagerOperation(self.frame_result, 'restaurant')
 
     def employee_info(self):
-        CRUD(self.frame_result, 'employee')
+        ManagerOperation(self.frame_result, 'employee')
 
     def customer_info(self):
-        CRUD(self.frame_result, 'customer')
+        ManagerOperation(self.frame_result, 'customer')
 
     def order_info(self):
-        CRUD(self.frame_result, 'order')
+        ManagerOperation(self.frame_result, 'order')
 
     def personal_information(self):
-        me = ConnectDatabase.find_manager(self.username, self.password, self.position)
+        me = ConnectDatabase.find_employ(self.username, self.password, self.position)
         self.username = me.employee_name
         self.password = me.employee_password
         self.id = me.employee_id

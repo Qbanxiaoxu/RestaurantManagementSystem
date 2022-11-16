@@ -10,7 +10,7 @@ import os
 
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import Customer
-from sample.gui.form import RestaurantUI, ShoppingCartUI, OrderUI
+from sample.gui.customerui import RestaurantUI, ShoppingCartUI, OrderUI
 
 
 class CustomerUI:
