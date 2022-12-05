@@ -72,20 +72,21 @@ class LoginUI:
         # 判断用户名和密码是否匹配
         if username != '' and password != '':
             # 记录是顾客或雇员
-            is_customer_signin, is_employee_signin = connection.ConnectDatabase().verify(username, password)
+            is_customer_signin, is_employee_signin = connection.ConnectDatabase('admin').verify(username, password)
             if is_customer_signin:
                 tkinter.messagebox.showinfo(title='welcome',
                                             message='Welcome!' + username)
                 self.window_login.destroy()
                 # TODO 打开顾客界面
                 CustomerUI(username, password)
+                return
             if is_employee_signin:
                 tkinter.messagebox.showinfo(title='welcome',
-                                            message='Welcome!' + username)
+                                            message='Welcome!\n' + username)
                 self.window_login.destroy()
                 # TODO 打开雇员界面
                 # TODO 判断雇员身份跳转不同界面
-                position = connection.ConnectDatabase().get_employee_position(username, password)
+                position = connection.ConnectDatabase('admin').get_employee_position(username, password)
                 if position == 'manager':
                     ManagerUI(username, password, position)
                 elif position == 'cashier':
@@ -98,6 +99,7 @@ class LoginUI:
                     CleanerUI(username, password, position)
                 else:
                     tkinter.messagebox.showerror('wrong', 'mei zhao dao')
+                return
 
             if not is_customer_signin and not is_employee_signin:
                 is_signup = tkinter.messagebox.askyesno('Sign up?',

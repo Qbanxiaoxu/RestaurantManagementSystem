@@ -21,7 +21,7 @@ class CashierOperation:
             self.listview.set_rows_height_fontsize()
             self.listview.set_head_font()
             self.listview.create_listview()
-            self.tables = ConnectDatabase().query_table()
+            self.tables = ConnectDatabase('admin').query_table()
             for t in self.tables:
                 restaurant = [t['table_id'], t['table_state']]
                 self.listview.add_row(False, restaurant)
@@ -38,7 +38,7 @@ class CashierOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.menu = ConnectDatabase().query_menu()
+            self.menu = ConnectDatabase('admin').query_menu()
             for m in self.menu:
                 dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
                 self.listview.add_row(False, dish)
@@ -55,7 +55,7 @@ class CashierOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.customers = ConnectDatabase().query_customer()
+            self.customers = ConnectDatabase('admin').query_customer()
             for c in self.customers:
                 customer = [c['customer_id'], c['customer_name'], c['customer_password'], c['contact_info']]
                 self.listview.add_row(False, customer)
@@ -73,7 +73,7 @@ class CashierOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.orders = ConnectDatabase().query_orders()
+            self.orders = ConnectDatabase('admin').query_orders()
             for o in self.orders:
                 order = [o['order_id'], o['customer_id'], o['restaurant_id'],
                          o['employee_id'], o['table_id'], o['order_time'],
@@ -94,7 +94,7 @@ class CashierOperation:
 
     def commit_check(self):
         check_id = self.check_id.get()
-        restaurant = ConnectDatabase.check(check_id=check_id, form_type=self.form_type)
+        restaurant = ConnectDatabase('admin').check(check_id=check_id, form_type=self.form_type)
         tkinter.messagebox.showinfo('check', str(restaurant))
 
     def destroy_frame(self):

@@ -4,13 +4,10 @@
 import tkinter
 import tkinter.messagebox
 from PIL import Image, ImageTk
-from tkinter import ttk
-from tkinter import VERTICAL, HORIZONTAL
 import os
 
 from sample.dao.connect import ConnectDatabase
 from sample.entity.Entity import Employee
-from sample.gui.customerui import RestaurantUI, ShoppingCartUI, OrderUI
 from sample.gui.managerui import ManagerOperation
 
 
@@ -108,7 +105,7 @@ class ManagerUI:
         ManagerOperation(self.frame_result, 'order')
 
     def personal_information(self):
-        me = ConnectDatabase.find_employ(self.username, self.password, self.position)
+        me = ConnectDatabase('admin').find_employ(self.username, self.password, self.position)
         self.username = me.employee_name
         self.password = me.employee_password
         self.id = me.employee_id
@@ -182,7 +179,7 @@ class ManagerUI:
         personal_info = "id:" + str(
             self.id) + "\nname:" + self.username + "\npassword:" + self.password + "\ncontact_info:" + self.contact_info
         tkinter.messagebox.showinfo('modifying the result', personal_info)
-        ConnectDatabase().modify_employee(host)
+        ConnectDatabase('admin').modify_employee(host)
         for widget in self.frame_detail.winfo_children():
             widget.destroy()
         tkinter.messagebox.showerror('Please log out and log in again', personal_info)

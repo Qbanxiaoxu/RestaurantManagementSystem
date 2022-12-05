@@ -17,13 +17,24 @@ class ConnectDatabase:
 
     # __shopping_cart_number=0
 
+    def __init__(self, user):
+        if user == "customer":
+            self.user = configure.mysql_database_user_customer
+            self.password = configure.mysql_database_password_customer
+        if user == "admin":
+            self.user = configure.mysql_database_user_administrator
+            self.password = configure.mysql_database_password_administrator
+        if user == "employee":
+            self.user = configure.mysql_database_user_employee
+            self.password = configure.mysql_database_password_employee
+
     # Query operation
-    @staticmethod
-    def query_customer():
+
+    def query_customer(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -35,12 +46,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_employee():
+    def query_employee(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -52,12 +62,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_menu():
+    def query_menu(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -69,12 +78,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_orders():
+    def query_orders(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -86,12 +94,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_restaurant():
+    def query_restaurant(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -103,12 +110,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_table():
+    def query_table(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -120,12 +126,11 @@ class ConnectDatabase:
                 result = cursor.fetchall()
         return result
 
-    @staticmethod
-    def query_shopping_cart():
+    def query_shopping_cart(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -141,8 +146,8 @@ class ConnectDatabase:
     def get_customer_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -158,8 +163,8 @@ class ConnectDatabase:
     def get_menu_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -175,8 +180,8 @@ class ConnectDatabase:
     def get_employee_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -192,8 +197,8 @@ class ConnectDatabase:
     def get_orders_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -209,8 +214,8 @@ class ConnectDatabase:
     def get_restaurant_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -226,8 +231,8 @@ class ConnectDatabase:
     def get_table_number(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -250,12 +255,12 @@ class ConnectDatabase:
         return 0
 
     # Add operation
-    @staticmethod
-    def add_customer(customer):
+
+    def add_customer(self, customer):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -269,12 +274,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_employee(employee):
+    def add_employee(self, employee):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -292,12 +296,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_menu(menu):
+    def add_menu(self, menu):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -311,12 +314,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_order(order):
+    def add_order(self, order):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -332,12 +334,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_restaurant(restaurant):
+    def add_restaurant(self, restaurant):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -350,12 +351,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_restaurant_table(restaurant_table):
+    def add_restaurant_table(self, restaurant_table):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -368,12 +368,11 @@ class ConnectDatabase:
                 cursor.execute(sql, values)
                 connection.commit()
 
-    @staticmethod
-    def add_shopping_cart(shopping_cart):
+    def add_shopping_cart(self, shopping_cart):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -388,12 +387,12 @@ class ConnectDatabase:
                 connection.commit()
 
     # Delete operation
-    @staticmethod
-    def delete_customer(customer_id):
+
+    def delete_customer(self, customer_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -405,12 +404,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_employee(employee_id):
+    def delete_employee(self, employee_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -422,12 +420,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_menu(dish_id):
+    def delete_menu(self, dish_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -439,12 +436,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_order(order_id):
+    def delete_order(self, order_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -456,12 +452,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_restaurant(restaurant_id):
+    def delete_restaurant(self, restaurant_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -473,12 +468,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_restaurant_table(table_id):
+    def delete_restaurant_table(self, table_id):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -490,12 +484,11 @@ class ConnectDatabase:
                 cursor.execute(sql, value)
                 connection.commit()
 
-    @staticmethod
-    def delete_shopping_cart():
+    def delete_shopping_cart(self):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -508,12 +501,11 @@ class ConnectDatabase:
 
     # Modify operation
 
-    @staticmethod
-    def modify_customer(customer):
+    def modify_customer(self, customer):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -536,12 +528,11 @@ class ConnectDatabase:
                     cursor.execute(sql, values)
                     connection.commit()
 
-    @staticmethod
-    def modify_employee(employee):
+    def modify_employee(self, employee):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -584,12 +575,11 @@ class ConnectDatabase:
                     cursor.execute(sql, values)
                     connection.commit()
 
-    @staticmethod
-    def modify_order(order):
+    def modify_order(self, order):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -607,12 +597,11 @@ class ConnectDatabase:
                     cursor.execute(sql, values)
                     connection.commit()
 
-    @staticmethod
-    def modify_menu(menu):
+    def modify_menu(self, menu):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -635,12 +624,11 @@ class ConnectDatabase:
                     cursor.execute(sql, values)
                     connection.commit()
 
-    @staticmethod
-    def modify_restaurant(restaurant):
+    def modify_restaurant(self, restaurant):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -658,12 +646,11 @@ class ConnectDatabase:
                     cursor.execute(sql, values)
                     connection.commit()
 
-    @staticmethod
-    def modify_restaurant_table(restaurant_table):
+    def modify_restaurant_table(self, restaurant_table):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -679,8 +666,8 @@ class ConnectDatabase:
     def verify(self, username, password):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -705,8 +692,8 @@ class ConnectDatabase:
     def get_employee_position(self, username, password):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -718,13 +705,12 @@ class ConnectDatabase:
                     return employee["position"]
         return "mei zhao dao"
 
-    @staticmethod
-    def find_customer(name, password):
+    def find_customer(self, name, password):
         customer = Customer(0, '', '', '')
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -742,13 +728,12 @@ class ConnectDatabase:
             customer.contact_info = result["contact_info"]
         return customer
 
-    @staticmethod
-    def find_employ(name, password, position):
+    def find_employ(self, name, password, position):
         employee = Employee(0, '', '', '', '', '', '', '', 0.0)
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset
@@ -771,12 +756,11 @@ class ConnectDatabase:
             employee.basic_salary = result["basic_salary"]
         return employee
 
-    @staticmethod
-    def check(check_id, form_type):
+    def check(self, check_id, form_type):
         connection = pymysql.connect(
             host=configure.mysql_database_host,
-            user=configure.mysql_database_user,
-            password=configure.mysql_database_password,
+            user=self.user,
+            password=self.password,
             database=configure.mysql_database_name,
             cursorclass=pymysql.cursors.DictCursor,
             charset=configure.mysql_database_charset

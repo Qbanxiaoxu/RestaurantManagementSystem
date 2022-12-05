@@ -25,7 +25,7 @@ class ChefForm:
         self.listview.set_head_font()
         self.listview.create_listview()
 
-        self.menu = ConnectDatabase().query_menu()
+        self.menu = ConnectDatabase('admin').query_menu()
         for m in self.menu:
             dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
             self.listview.add_row(False, dish)
@@ -81,7 +81,7 @@ class ChefForm:
         dish_price = self.dish_price
         dish_description = self.dish_description
         dish = Menu(dish_id=None, dish_name=dish_name, dish_price=dish_price, dish_description=dish_description)
-        ConnectDatabase.add_menu(dish)
+        ConnectDatabase('admin').add_menu(dish)
         tkinter.messagebox.showinfo('add', "Dish added successfully!")
 
     def delete(self):
@@ -90,7 +90,7 @@ class ChefForm:
                                                 selected_info)
         if is_delete:
             for select in selected:
-                ConnectDatabase.delete_menu(select[1])
+                ConnectDatabase('admin').delete_menu(select[1])
             tkinter.messagebox.showinfo('delete', 'Successfully deleted!')
 
     def check(self):
@@ -104,7 +104,7 @@ class ChefForm:
 
     def commit_check(self):
         check_id = self.check_id.get()
-        restaurant = ConnectDatabase.check(check_id=check_id, form_type='menu')
+        restaurant = ConnectDatabase('admin').check(check_id=check_id, form_type='menu')
         tkinter.messagebox.showinfo('check', str(restaurant))
 
     @staticmethod

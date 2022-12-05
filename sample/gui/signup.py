@@ -53,12 +53,12 @@ class SignupUI:
                                              message='The user name or password or contact information is empty')
             else:
                 # 记录是顾客或雇员
-                is_customer_signup, is_employee_signup = connection.ConnectDatabase().verify(username, password)
+                is_customer_signup, is_employee_signup = connection.ConnectDatabase('admin').verify(username, password)
                 if is_customer_signup or is_employee_signup:
                     tkinter.messagebox.showerror(title='error', message='The user name is already in use!')
                 else:
                     customer = Entity.Customer(None, username, password, contact_info)
-                    connection.ConnectDatabase().add_customer(customer)
+                    connection.ConnectDatabase('admin').add_customer(customer)
                     tkinter.messagebox.showinfo(title='signup result', message='Successful!')
                     self.window_signup.destroy()
         else:

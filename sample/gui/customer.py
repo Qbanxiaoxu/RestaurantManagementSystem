@@ -95,7 +95,7 @@ class CustomerUI:
         shoppingcart = ShoppingCartUI(self.frame_result, self.id)
 
     def personal_information(self):
-        me = ConnectDatabase.find_customer(self.username, self.password)
+        me = ConnectDatabase('admin').find_customer(self.username, self.password)
         # 顾客信息
         # self.password_modify = None
         # self.contact_info_modify = None
@@ -147,7 +147,7 @@ class CustomerUI:
         personal_info = "id:" + str(
             self.id) + "\nname:" + self.username + "\npassword:" + self.password + "\ncontact_info:" + self.contact_info
         tkinter.messagebox.showinfo('modifying the result', personal_info)
-        ConnectDatabase().modify_customer(host)
+        ConnectDatabase('admin').modify_customer(host)
         for widget in self.frame_detail.winfo_children():
             widget.destroy()
         tkinter.messagebox.showerror('Please log out and log in again', personal_info)

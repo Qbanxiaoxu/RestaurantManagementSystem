@@ -27,7 +27,7 @@ class RestaurantUI:
         self.__check_boxes = True  # 标识是否有复选框功能
         self.__show_index = True  # 标识是否显示行号
         self.listview = ListViewUI(self.frame)
-        self.restaurants = ConnectDatabase().query_restaurant()
+        self.restaurants = ConnectDatabase('admin').query_restaurant()
 
         self.listview.add_column('restaurant_id')
         self.listview.add_column('restaurant_name')
@@ -70,7 +70,7 @@ class MenuUI:
         self.listview.set_head_font()
         self.listview.create_listview()
 
-        self.menu = ConnectDatabase().query_menu()
+        self.menu = ConnectDatabase('admin').query_menu()
         for m in self.menu:
             dish = [self.restaurant_id, m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
             self.listview.add_row(False, dish)
@@ -104,7 +104,7 @@ class MenuUI:
             #             a.dish_sum_price += float(d[3])
             for dish_add in shopping_cart_add:
                 # print(dish_add)
-                ConnectDatabase.add_shopping_cart(dish_add)
+                ConnectDatabase('admin').add_shopping_cart(dish_add)
 
 
 class ShoppingCartUI:
@@ -125,7 +125,7 @@ class ShoppingCartUI:
         self.listview.set_rows_height_fontsize()
         self.listview.set_head_font()
         self.listview.create_listview()
-        self.shopping_carts = ConnectDatabase().query_shopping_cart()
+        self.shopping_carts = ConnectDatabase('admin').query_shopping_cart()
         for s in self.shopping_carts:
             shopping_cart = [s['restaurant_id'], s['dish_id'], s['dish_num'], s['dish_sum_price']]
             self.listview.add_row(False, shopping_cart)
@@ -151,12 +151,12 @@ class ShoppingCartUI:
 
             note = self.note_input
             pay_state = 'no'
-            tables = ConnectDatabase.query_table()
+            tables = ConnectDatabase('admin').query_table()
             for t in tables:
                 if t['table_state'] == 'idle':
                     table_id = t['table_id']
                     break
-            employee = ConnectDatabase.query_employee()
+            employee = ConnectDatabase('admin').query_employee()
             for e in employee:
                 if e['work_state'] == "idle":
                     employee_id = e['employee_id']
@@ -171,9 +171,9 @@ class ShoppingCartUI:
                 order = Order(None, customer_id=customer_id, restaurant_id=restaurant_id, employee_id=employee_id,
                               table_id=table_id, order_time=order_time, total_price=total_price, note=note,
                               pay_state=pay_state)
-                ConnectDatabase.add_order(order)
+                ConnectDatabase('admin').add_order(order)
         tkinter.messagebox.showinfo("place order", "Order successful but not paid!")
-        ConnectDatabase().delete_shopping_cart()
+        ConnectDatabase('admin').delete_shopping_cart()
 
     @staticmethod
     def delete_shopping_cart():
@@ -181,7 +181,7 @@ class ShoppingCartUI:
         is_delete = tkinter.messagebox.askyesno('Are you sure to delete?',
                                                 "The items in the cart will be deleted")
         if is_delete:
-            ConnectDatabase.delete_shopping_cart()
+            ConnectDatabase('admin').delete_shopping_cart()
 
 
 class OrderUI:
@@ -208,7 +208,7 @@ class OrderUI:
         self.listview.set_head_font()
         self.listview.create_listview()
 
-        self.orders = ConnectDatabase().query_orders()
+        self.orders = ConnectDatabase('admin').query_orders()
         for o in self.orders:
             if o['customer_id'] == self.user_id:
                 order = [o['order_id'], o['customer_id'], o['restaurant_id'],
@@ -231,8 +231,8 @@ class OrderUI:
                     order_pay = Order(order_id=int(order[1]), customer_id=int(order[2]), restaurant_id=int(order[3]),
                                       employee_id=int(order[4]), table_id=int(order[5]), order_time=order[6],
                                       total_price=float(order[7]), note=order[8], pay_state='yes')
-                    ConnectDatabase.modify_order(order_pay)
-        tkinter.messagebox.showinfo('welcome next time', 'Successful payment!')
+                    ConnectDatabase('admin').modify_order(order_pay)
+                    tkinter.messagebox.showinfo('welcome next time', 'Successful payment!')
 
     def get_selected_orders(self):
         selected_orders = []
@@ -253,5 +253,6 @@ class OrderUI:
                                                 order_selected_info)
         if is_delete:
             for order in selected_orders:
-                ConnectDatabase.delete_order(int(order[1]))
-        tkinter.messagebox.showinfo('the result of the deletion operation', 'Deleting the selected order succeeded!')
+                ConnectDatabase('admin').delete_order(int(order[1]))
+            tkinter.messagebox.showinfo('the result of the deletion operation',
+                                        'Deleting the selected order succeeded!')

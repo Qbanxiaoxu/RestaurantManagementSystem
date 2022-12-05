@@ -24,7 +24,7 @@ class ManagerOperation:
             self.listview.set_rows_height_fontsize()
             self.listview.set_head_font()
             self.listview.create_listview()
-            self.restaurants = ConnectDatabase().query_restaurant()
+            self.restaurants = ConnectDatabase('admin').query_restaurant()
             for r in self.restaurants:
                 restaurant = [r['restaurant_id'], r['restaurant_name'], r['restaurant_address']]
                 self.listview.add_row(False, restaurant)
@@ -41,7 +41,7 @@ class ManagerOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.menu = ConnectDatabase().query_menu()
+            self.menu = ConnectDatabase('admin').query_menu()
             for m in self.menu:
                 dish = [m['dish_id'], m['dish_name'], m['dish_price'], m['dish_description']]
                 self.listview.add_row(False, dish)
@@ -68,7 +68,7 @@ class ManagerOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.employees = ConnectDatabase().query_employee()
+            self.employees = ConnectDatabase('admin').query_employee()
             for e in self.employees:
                 employee = [e['employee_id'], e['employee_name'], e['gender'],
                             e['id_number'], e['contact_info'], e['position'],
@@ -87,7 +87,7 @@ class ManagerOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.customers = ConnectDatabase().query_customer()
+            self.customers = ConnectDatabase('admin').query_customer()
             for c in self.customers:
                 customer = [c['customer_id'], c['customer_name'], c['customer_password'], c['contact_info']]
                 self.listview.add_row(False, customer)
@@ -105,7 +105,7 @@ class ManagerOperation:
             self.listview.set_head_font()
             self.listview.create_listview()
 
-            self.orders = ConnectDatabase().query_orders()
+            self.orders = ConnectDatabase('admin').query_orders()
             for o in self.orders:
                 order = [o['order_id'], o['customer_id'], o['restaurant_id'],
                          o['employee_id'], o['table_id'], o['order_time'],
@@ -212,37 +212,38 @@ class ManagerOperation:
             restaurant_address = self.restaurant_address.get()
             restaurant = Restaurant(restaurant_id=None, restaurant_address=restaurant_address,
                                     restaurant_name=restaurant_name)
-            ConnectDatabase.add_restaurant(restaurant)
+            ConnectDatabase('admin').add_restaurant(restaurant)
             tkinter.messagebox.showinfo('add', "Restaurant added successfully!")
         if self.form_type == 'menu':
-            dish_name = self.dish_name
-            dish_price = self.dish_price
-            dish_description = self.dish_description
-            dish = Menu(dish_id=None, dish_name=dish_name, dish_price=dish_price, dish_description=dish_description)
-            ConnectDatabase.add_menu(dish)
+            dish_name = self.dish_name.get()
+            dish_price = self.dish_price.get()
+            dish_description = self.dish_description.get()
+            dish = Menu(dish_id=None, dish_name=dish_name, dish_price=float(dish_price),
+                        dish_description=dish_description)
+            ConnectDatabase('admin').add_menu(dish)
             tkinter.messagebox.showinfo('add', "Dish added successfully!")
         if self.form_type == 'employee':
-            employee_name = self.employee_name
-            employee_password = self.employee_password
-            employee_contact_info = self.employee_contact_info
-            gender = self.gender
-            id_number = self.id_number
-            position = self.position
-            word_state = self.word_state
-            basic_salary = self.basic_salary
+            employee_name = self.employee_name.get()
+            employee_password = self.employee_password.get()
+            employee_contact_info = self.employee_contact_info.get()
+            gender = self.gender.get()
+            id_number = self.id_number.get()
+            position = self.position.get()
+            word_state = self.word_state.get()
+            basic_salary = self.basic_salary.get()
             employee = Employee(employee_id=None, employee_password=employee_password,
                                 employee_name=employee_name, contact_info=employee_contact_info,
                                 gender=gender, work_state=word_state, basic_salary=basic_salary,
                                 id_number=id_number, position=position)
-            ConnectDatabase.add_employee(employee)
+            ConnectDatabase('admin').add_employee(employee)
             tkinter.messagebox.showinfo('add', "Employee added successfully!")
         if self.form_type == 'customer':
-            customer_name = self.customer_name
-            customer_password = self.customer_password
-            customer_contact_info = self.customer_contact_info
+            customer_name = self.customer_name.get()
+            customer_password = self.customer_password.get()
+            customer_contact_info = self.customer_contact_info.get()
             customer = Customer(customer_id=None, customer_name=customer_name,
                                 customer_password=customer_password, contact_info=customer_contact_info)
-            ConnectDatabase.add_customer(customer)
+            ConnectDatabase('admin').add_customer(customer)
             tkinter.messagebox.showinfo('add', "Customer added successfully!")
 
     def delete(self):
@@ -252,19 +253,19 @@ class ManagerOperation:
         if is_delete:
             if self.form_type == 'restaurant':
                 for select in selected:
-                    ConnectDatabase.delete_restaurant(select[1])
+                    ConnectDatabase('admin').delete_restaurant(select[1])
             if self.form_type == 'menu':
                 for select in selected:
-                    ConnectDatabase.delete_menu(select[1])
+                    ConnectDatabase('admin').delete_menu(select[1])
             if self.form_type == 'order':
                 for select in selected:
-                    ConnectDatabase.delete_order(select[1])
+                    ConnectDatabase('admin').delete_order(select[1])
             if self.form_type == 'employee':
                 for select in selected:
-                    ConnectDatabase.delete_employee(select[1])
+                    ConnectDatabase('admin').delete_employee(select[1])
             if self.form_type == 'customer':
                 for select in selected:
-                    ConnectDatabase.delete_customer(select[1])
+                    ConnectDatabase('admin').delete_customer(select[1])
             tkinter.messagebox.showinfo('delete', 'Successfully deleted!')
 
     def check(self):
@@ -278,7 +279,7 @@ class ManagerOperation:
 
     def commit_check(self):
         check_id = self.check_id.get()
-        restaurant = ConnectDatabase.check(check_id=check_id, form_type=self.form_type)
+        restaurant = ConnectDatabase('admin').check(check_id=check_id, form_type=self.form_type)
         tkinter.messagebox.showinfo('check', str(restaurant))
 
     @staticmethod
